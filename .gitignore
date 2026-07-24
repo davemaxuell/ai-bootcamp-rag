@@ -1,0 +1,8 @@
+.env
+API_key.txt
+API_key-checkpoint.txt
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.pytest_cache/
+.superpowers/
