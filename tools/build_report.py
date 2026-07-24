@@ -383,15 +383,15 @@ def build_report():
         set_page_geometry(section)
         configure_header_footer(section)
 
-    # Page 1 — Editorial cover.
+    # Cover — intentionally simple and student-report-like.
     spacer = doc.add_paragraph()
-    spacer.paragraph_format.space_after = Pt(72)
+    spacer.paragraph_format.space_after = Pt(88)
 
     kicker = doc.add_paragraph()
     kicker.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    kicker.paragraph_format.space_after = Pt(18)
-    run = kicker.add_run("MULTILINGUAL AI SERVICE · FINAL PROJECT")
-    set_run_font(run, size=10.5, color=GOLD, bold=True)
+    kicker.paragraph_format.space_after = Pt(16)
+    run = kicker.add_run("프로젝트 결과보고서")
+    set_run_font(run, size=11, color=GOLD, bold=True)
 
     title = doc.add_paragraph(style="Title")
     title.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -399,264 +399,222 @@ def build_report():
 
     subtitle = doc.add_paragraph(style="Subtitle")
     subtitle.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    subtitle.add_run("LangChain & RAG 기반 외국인 지원자 맞춤형 입학 안내 서비스")
+    subtitle.add_run("공식 입학 문서를 근거로 답하는 LangChain·RAG 서비스")
 
-    line = doc.add_paragraph()
-    line.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    line.paragraph_format.space_after = Pt(54)
-    line_run = line.add_run("Official documents → semantic retrieval → grounded multilingual answers")
-    set_run_font(line_run, size=10, color=MUTED, italic=True)
+    summary = doc.add_paragraph()
+    summary.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    summary.paragraph_format.left_indent = Inches(0.65)
+    summary.paragraph_format.right_indent = Inches(0.65)
+    summary.paragraph_format.space_after = Pt(58)
+    run = summary.add_run(
+        "외국인 지원자가 입학 서류와 일정을 자신의 언어로 쉽게 확인할 수 있도록 만든 웹 서비스"
+    )
+    set_run_font(run, size=10.5, color=MUTED)
 
     add_metadata_line(doc, "작성자", AUTHOR)
     add_metadata_line(doc, "학번", STUDENT_ID)
     add_metadata_line(doc, "제출일", REPORT_DATE)
     add_metadata_line(doc, "GitHub", GITHUB_URL)
-    add_metadata_line(doc, "Web", DEPLOY_URL)
+    add_metadata_line(doc, "배포 URL", DEPLOY_URL)
 
     closing = doc.add_paragraph()
     closing.alignment = WD_ALIGN_PARAGRAPH.CENTER
     closing.paragraph_format.space_before = Pt(42)
-    run = closing.add_run("부산외국어대학교 · 첨단산업 인재양성 AI 부트캠프")
+    run = closing.add_run("부산외국어대학교 AI 부트캠프")
     set_run_font(run, size=10, color=MUTED)
 
     add_page_break(doc)
 
-    # Page 2 — Executive summary and requirements.
-    doc.add_heading("1. 프로젝트 개요", level=1)
-    add_lead_callout(
-        doc,
-        "핵심 성과",
-        "한국어·영어 공식 입학 문서 6개를 64개 검색 단위로 구축하고, 질문 언어를 유지한 근거 기반 Q&A와 개인화 제출서류 체크리스트를 하나의 Streamlit 서비스로 구현했다.",
+    doc.add_heading("1. 프로젝트를 시작한 이유", level=1)
+    doc.add_paragraph(
+        "부산외대에는 한국어가 익숙하지 않은 외국인 지원자가 많다. 입학 관련 자료는 한국어와 "
+        "영어 PDF로 나뉘어 있고, 모집요강 안에서도 마감일·지원 자격·제출 서류가 여러 페이지에 "
+        "흩어져 있다. 필요한 내용을 찾으려면 문서를 하나씩 열어 봐야 해서 처음 지원하는 학생에게는 "
+        "불편할 수 있다고 생각했다."
+    )
+    doc.add_paragraph(
+        "그래서 단순히 문장을 번역하는 서비스보다, 공식 문서에서 질문과 관련된 부분을 먼저 찾고 "
+        "그 근거를 보여 주는 도구를 만들기로 했다. 특히 '무슨 서류를 준비해야 하는가'는 지원자의 "
+        "과정과 신입·편입 여부에 따라 달라지므로, 일반 질문 답변과 별도로 체크리스트 기능도 넣었다."
     )
 
-    paragraph = doc.add_paragraph()
-    paragraph.add_run(
-        "외국인 지원자는 모집요강, 온라인 접수 안내, 제출서류 체크리스트에 흩어진 정보를 "
-        "여러 언어로 이해해야 한다. 일반 번역기는 문장을 바꾸는 데 그치며, 지원 과정과 "
-        "신입·편입 여부에 따라 필요한 정보를 찾아 조합하고 공식 근거를 제시하지 못한다. "
-        "본 프로젝트는 RAG로 이 문제를 해결한다."
-    )
+    doc.add_heading("1.1 만들고 싶었던 기능", level=2)
+    add_bullet(doc, "질문은 한국어·영어뿐 아니라 중국어와 베트남어 등 다른 언어로도 입력할 수 있게 한다.")
+    add_bullet(doc, "답변에는 참고한 PDF 파일명과 페이지를 함께 표시한다.")
+    add_bullet(doc, "학부/대학원과 신입/편입 조건을 반영한 제출서류 목록을 만든다.")
+    add_bullet(doc, "문서에서 찾지 못한 내용은 추측하지 않고 입학처 확인을 안내한다.")
 
-    doc.add_heading("1.1 목표", level=2)
-    add_bullet(doc, "사용자가 한국어, 영어, 중국어, 베트남어 등 원하는 언어로 질문할 수 있게 한다.")
-    add_bullet(doc, "답변을 공식 BUFS 입학 문서의 파일명과 페이지에 연결하여 검증 가능하게 한다.")
-    add_bullet(doc, "지원 과정과 지원 유형을 반영한 제출서류 체크리스트를 자동 생성한다.")
-    add_bullet(doc, "근거가 없으면 추측하지 않고 입학처 확인을 안내하는 안전장치를 제공한다.")
-
-    doc.add_heading("1.2 구현 범위 및 성과", level=2)
+    doc.add_heading("1.2 프로젝트 한눈에 보기", level=2)
     add_table(
         doc,
-        ["구분", "구현 결과"],
+        ["항목", "내용"],
         [
-            ("데이터", "BUFS 공식 입학 PDF 6개 · 한국어/영어"),
-            ("검색 인덱스", "Chroma VectorDB · 64개 임베딩 청크"),
-            ("사용자 기능", "다국어 Q&A · 맞춤형 제출서류 체크리스트"),
-            ("검증", "단위 테스트 12/12 · 다국어 라이브 평가 4/4"),
-            ("웹 서비스", "Streamlit Chat/Checklist 2개 탭"),
+            ("사용 문서", "BUFS 공식 입학 관련 PDF 6개(한국어·영어)"),
+            ("검색 데이터", "페이지 정보를 포함한 텍스트 청크 64개"),
+            ("주요 기능", "다국어 질문 답변, 출처 표시, 맞춤형 서류 체크리스트"),
+            ("사용 기술", "LangChain, Chroma, OpenAI API, Streamlit"),
+            ("배포", "GitHub + Streamlit Community Cloud"),
         ],
         [2300, 7060],
     )
 
-    doc.add_heading("1.3 과제 요구사항 대응", level=2)
+    doc.add_heading("2. 구현 과정", level=1)
+    doc.add_heading("2.1 PDF에서 검색 데이터 만들기", level=2)
+    doc.add_paragraph(
+        "먼저 모집요강 4개, 온라인 원서접수 안내 1개, 제출서류 체크리스트 1개를 모았다. "
+        "pdfplumber로 페이지별 텍스트를 읽고, 추출된 글자가 너무 적은 페이지는 pypdf로 "
+        "한 번 더 읽도록 했다. 이후 한 페이지의 글이 길면 최대 2,000자 단위로 나누었다. "
+        "각 조각에는 원본 파일명, 페이지 번호, 문서 언어, 학부/대학원 구분을 저장했다."
+    )
+    doc.add_paragraph(
+        "실제 문서를 돌려 보니 총 64개 청크가 나왔다. 이 수가 많지는 않지만, 약 50페이지 정도의 "
+        "입학 자료를 실습용으로 검색하기에는 충분했고 출처 페이지를 유지하기도 쉬웠다."
+    )
+
+    doc.add_heading("2.2 RAG 동작 순서", level=2)
+    add_number(doc, "임베딩", "64개 청크를 text-embedding-3-small로 변환해 Chroma에 저장했다.")
+    add_number(doc, "검색", "사용자의 질문과 의미가 가까운 문서 조각을 기본 6개 가져온다.")
+    add_number(doc, "필터", "체크리스트에서는 학부/대학원 자료와 공통 안내 문서만 검색한다.")
+    add_number(doc, "답변", "검색 결과와 질문을 gpt-4o-mini에 보내 문서 안의 내용으로만 답하게 한다.")
+    add_number(doc, "출처", "검색된 파일명과 페이지를 답변 아래에 별도로 표시한다.")
+
+    doc.add_heading("2.3 파일 구성", level=2)
     add_table(
         doc,
-        ["요구사항", "적용 내용", "상태"],
+        ["파일", "역할"],
         [
-            ("Claude Code", "요구 분석, 모듈 설계, 테스트·오류 수정·배포 워크플로에 활용", "충족"),
-            ("LangChain", "Document, OpenAIEmbeddings, ChatOpenAI, Chroma 연동", "충족"),
-            ("RAG", "다국어 문서 추출→임베딩→검색→근거 기반 생성", "충족"),
-            ("고차원 기능", "출처 Q&A, 답변 거절, 지원자별 체크리스트", "충족"),
-            ("웹 배포", "GitHub 기반 Streamlit Community Cloud 배포", "완료"),
+            ("extract.py", "PDF를 읽고 페이지 정보가 있는 청크로 나눈다."),
+            ("ingest.py", "청크를 임베딩해 persistent Chroma DB를 만든다."),
+            ("retriever.py", "질문과 가까운 문서를 검색하고 과정 필터를 적용한다."),
+            ("answerer.py", "검색 문서만 근거로 다국어 답변과 출처를 만든다."),
+            ("checklist.py", "지원 조건을 반영한 제출서류 목록을 만든다."),
+            ("app.py", "질문 탭과 체크리스트 탭을 제공하는 Streamlit 화면이다."),
         ],
-        [2100, 5760, 1500],
-        [
-            WD_ALIGN_PARAGRAPH.LEFT,
-            WD_ALIGN_PARAGRAPH.LEFT,
-            WD_ALIGN_PARAGRAPH.CENTER,
-        ],
+        [2200, 7160],
     )
 
-    # Page 3 — Architecture.
-    doc.add_heading("2. 시스템 설계", level=1)
+    doc.add_heading("2.4 다국어 질문 처리", level=2)
     doc.add_paragraph(
-        "서비스는 사전 구축 단계와 사용자 요청 단계로 분리된다. 사전 구축에서는 PDF를 "
-        "추출·임베딩하여 영속 Chroma 인덱스를 만들고, 요청 단계에서는 질문마다 관련 문맥을 "
-        "검색해 LLM에 제한된 근거로 제공한다."
+        "원본 문서는 한국어와 영어지만 임베딩 모델이 여러 언어의 의미를 비교할 수 있기 때문에, "
+        "중국어와 베트남어 질문도 관련 영어 또는 한국어 문서로 연결할 수 있었다. 답변 프롬프트에는 "
+        "사용자가 질문한 언어로 답하라는 조건을 넣었다. 따라서 별도의 번역기처럼 문장을 1:1로 "
+        "바꾸는 것이 아니라, 다른 언어로 검색한 뒤 필요한 내용을 정리해서 답하는 구조다."
     )
 
-    doc.add_heading("2.1 데이터 흐름", level=2)
-    add_number(doc, "PDF 추출", "`pdfplumber`를 우선 사용하고 짧은 페이지는 `pypdf`로 보완한다.")
-    add_number(doc, "청크 분할", "페이지 정보를 유지하면서 최대 2,000자 단위로 문서를 분할한다.")
-    add_number(doc, "메타데이터", "source, page, lang, level을 각 청크에 저장한다.")
-    add_number(doc, "임베딩", "`text-embedding-3-small`로 의미 벡터를 생성한다.")
-    add_number(doc, "검색", "질문과 유사한 상위 문서를 찾고 지원 과정 필터를 적용한다.")
-    add_number(doc, "생성", "`gpt-4o-mini`가 검색 문맥만 사용하여 질문 언어로 답변한다.")
+    doc.add_heading("3. 완성한 기능", level=1)
+    doc.add_heading("3.1 다국어 질문 답변", level=2)
+    doc.add_paragraph(
+        "첫 번째 탭에서는 사용자가 자연어로 질문할 수 있다. 예를 들어 영어로 지원 마감일을 묻거나, "
+        "중국어로 학부 지원 서류를 물어도 관련 모집요강을 검색한다. 답변 아래에는 실제로 검색된 "
+        "PDF와 페이지가 표시된다. 중요한 날짜나 금액을 확인할 때 원문으로 다시 돌아갈 수 있게 한 것이다."
+    )
 
-    doc.add_heading("2.2 주요 컴포넌트", level=2)
+    doc.add_heading("3.2 제출서류 체크리스트", level=2)
+    doc.add_paragraph(
+        "두 번째 탭에서는 학부/대학원, 전공, 신입/편입, 원하는 답변 언어를 입력한다. 그러면 일반 "
+        "체크리스트와 해당 과정의 모집요강을 같이 검색해 번호가 있는 준비 서류 목록을 만든다. "
+        "지원자에 따라 달라질 수 있는 어학 성적이나 가족관계 서류는 조건이 있다는 점도 함께 설명하도록 했다."
+    )
+
+    doc.add_heading("3.3 답변을 찾지 못했을 때", level=2)
+    doc.add_paragraph(
+        "검색 결과가 비어 있으면 모델을 호출하지 않고 '공식 문서에서 찾지 못했으니 입학처에 확인해 "
+        "달라'는 문구를 반환한다. 입학 정보는 잘못된 날짜 하나도 문제가 될 수 있기 때문에, 그럴듯한 "
+        "답을 만드는 것보다 모른다고 말하는 편이 더 중요하다고 판단했다."
+    )
+
+    doc.add_heading("4. 개발하면서 생긴 문제", level=1)
+    doc.add_heading("4.1 PDF가 두 번 들어가던 문제", level=2)
+    doc.add_paragraph(
+        "처음에는 소문자 *.pdf와 대문자 *.PDF를 각각 검색했다. 그런데 Windows에서는 두 패턴이 "
+        "같은 파일을 모두 잡아서 64개여야 할 청크가 128개가 되었다. 테스트 자체는 통과했지만 그대로 "
+        "두면 임베딩 비용과 검색 결과가 중복될 수 있었다. 파일명을 기준으로 경로를 한 번만 남기도록 "
+        "수정한 뒤 청크가 64개인지 다시 확인했다. 예상하지 못했던 운영체제 차이였다."
+    )
+
+    doc.add_heading("4.2 표와 이미지가 많은 PDF", level=2)
+    doc.add_paragraph(
+        "모집요강에는 표가 많아서 일반 텍스트 추출만 사용하면 줄 순서가 자연스럽지 않은 부분이 있었다. "
+        "이번 버전에서는 표 처리에 비교적 나은 pdfplumber를 우선 사용하고 pypdf를 보조로 사용했다. "
+        "여섯 파일의 모든 페이지에서 텍스트가 나오기는 했지만, 스크린샷 안의 글자까지 읽는 OCR은 넣지 못했다."
+    )
+
+    doc.add_heading("4.3 배포 시 API 키 관리", level=2)
+    doc.add_paragraph(
+        "로컬에서는 .env를 사용했지만 GitHub에는 키가 올라가면 안 된다. .env와 기존 키 파일을 "
+        ".gitignore에 넣고, Streamlit 배포에서는 Secrets에 OPENAI_API_KEY를 따로 등록했다. "
+        "마지막 푸시 전에 커밋 대상 파일에 키 형태의 문자열이 없는지도 확인했다."
+    )
+
+    doc.add_heading("5. Claude Code를 사용한 부분", level=1)
+    doc.add_paragraph(
+        "Claude Code는 서비스 안에서 답변하는 모델이 아니라 개발 과정의 도구로 사용했다. 처음에는 "
+        "요구사항을 기능별 파일로 나누고 각 함수의 입력과 출력을 정리하는 데 도움을 받았다. 이후 "
+        "테스트 코드를 먼저 만들고, 실패하는 부분을 확인한 뒤 구현하는 순서로 진행했다."
+    )
+    doc.add_paragraph(
+        "생성된 코드를 그대로 끝내지는 않았다. 실제 PDF를 실행했을 때 나온 청크 수를 확인했고, "
+        "Windows 중복 문제처럼 계획에 없던 오류는 원인을 다시 찾아 수정했다. 마지막에는 테스트, "
+        "비밀키 검사, Git 상태, Streamlit 공개 URL을 각각 확인했다. 이 과정에서 AI 코딩 도구도 "
+        "실행 결과를 직접 검토해야 한다는 점을 배웠다."
+    )
+
+    doc.add_heading("6. 테스트 결과", level=1)
+    doc.add_paragraph(
+        "자동 테스트는 총 12개를 작성했다. 설정값과 파일명 분류, PDF 청크, 빈 검색 결과 처리, "
+        "체크리스트 거절 로직, 안정적인 문서 ID, 과정 필터를 확인했다."
+    )
     add_table(
         doc,
-        ["모듈", "역할", "핵심 설계"],
+        ["확인한 항목", "결과"],
         [
-            ("extract.py", "PDF 텍스트 추출·분할", "페이지와 파일 출처 보존, Windows 중복 glob 방지"),
-            ("ingest.py", "VectorDB 구축", "안정적 SHA-256 ID로 재인덱싱 시 중복 방지"),
-            ("retriever.py", "유사도 검색", "학부/대학원 + 공통 문서 메타데이터 필터"),
-            ("answerer.py", "근거 기반 답변", "동일 언어 응답, 인라인 출처, 빈 문맥 즉시 거절"),
-            ("checklist.py", "맞춤 체크리스트", "과정·전공·신입/편입·언어를 프롬프트에 반영"),
-            ("app.py", "웹 인터페이스", "질문 탭과 체크리스트 탭, 오류 메시지와 출처 표시"),
+            ("단위 테스트", "12개 모두 통과"),
+            ("Chroma 저장 데이터", "64개 벡터 확인"),
+            ("다국어 질문", "한국어·영어·중국어·베트남어 4개 질문 통과"),
+            ("로컬 Streamlit", "헬스 체크 HTTP 200"),
+            ("공개 웹 서비스", "실제 질문 답변과 PDF 파일명·페이지 표시 확인"),
         ],
-        [1700, 2600, 5060],
+        [3300, 6060],
     )
-
-    doc.add_heading("2.3 다국어 RAG 전략", level=2)
     doc.add_paragraph(
-        "원문 데이터는 한국어와 영어지만, 다국어 의미 공간을 지원하는 임베딩 모델을 사용해 "
-        "중국어·베트남어 질문도 관련 한국어/영어 문서로 연결한다. 답변 시에는 시스템 지침으로 "
-        "사용자의 질문 언어를 유지한다. 즉, 번역 자체가 목적이 아니라 문서 검색, 맥락 결합, "
-        "개인화된 정보 구조화가 핵심이다."
+        "다국어 평가는 아직 4개 질문만 사용한 간단한 확인용 테스트다. 마감일이나 등록금처럼 정답을 "
+        "정확히 비교해야 하는 질문을 더 추가하면 서비스 품질을 더 제대로 평가할 수 있다."
     )
 
-    # Page 4 — Features and safeguards.
-    doc.add_heading("3. 핵심 기능", level=1)
-
-    doc.add_heading("3.1 공식 문서 기반 다국어 Q&A", level=2)
+    doc.add_heading("7. 배포", level=1)
     doc.add_paragraph(
-        "사용자가 어느 언어로 질문하더라도 관련 모집요강과 안내서의 상위 문맥을 검색한다. "
-        "LLM은 제공된 문맥 밖의 날짜, 금액, 자격요건을 만들지 않도록 제한되며, 답변과 별도로 "
-        "검색에 사용된 파일명 및 페이지 목록을 UI에 표시한다."
+        "소스 코드는 GitHub의 main 브랜치에 올렸고, Streamlit Community Cloud에서 app.py를 "
+        "실행하도록 연결했다. Chroma 데이터베이스도 저장소에 포함했기 때문에 배포 서버에서 PDF를 "
+        "다시 임베딩하지 않아도 된다."
     )
-    add_bullet(doc, "예시 질문: “What is the application deadline?”")
-    add_bullet(doc, "예시 질문: “本科申请需要什么材料?”")
-    add_bullet(doc, "예시 질문: “Cần những giấy tờ gì để nộp hồ sơ?”")
-
-    doc.add_heading("3.2 개인화 제출서류 체크리스트", level=2)
-    doc.add_paragraph(
-        "사용자는 학부/대학원, 전공, 신입/편입, 출력 언어를 지정한다. 서비스는 일반 체크리스트와 "
-        "해당 과정 모집요강을 함께 검색해 번호가 있는 서류 목록을 생성하고, 국적·학력·어학점수에 "
-        "따라 달라지는 조건을 분리해서 표시한다."
-    )
-
-    doc.add_heading("3.3 신뢰성과 안전장치", level=2)
     add_table(
         doc,
-        ["위험", "대응 방식"],
+        ["제출 항목", "위치"],
         [
-            ("근거 없는 답변", "검색 문서가 없으면 LLM을 호출하지 않고 입학처 확인 문구 반환"),
-            ("잘못된 과정 혼합", "학부/대학원 필터와 공통 문서를 함께 검색"),
-            ("출처 불명확", "파일명·페이지를 문맥과 UI에 모두 표시"),
-            ("인덱스 중복", "문서 내용 기반 해시 ID를 사용한 멱등적 ingest"),
-            ("비밀키 노출", ".env/API_key.txt를 gitignore 처리하고 배포 Secrets 사용"),
-        ],
-        [2500, 6860],
-    )
-
-    doc.add_heading("3.4 웹 사용자 경험", level=2)
-    add_bullet(doc, "Ask a question: 자연어 질문 입력 → 공식 문서 검색 → 다국어 답변 및 출처 표시")
-    add_bullet(doc, "My document checklist: 지원자 조건 입력 → 개인화된 번호 목록 생성")
-    add_bullet(doc, "API 키 미설정 및 실행 오류를 사용자가 이해할 수 있는 메시지로 표시")
-    add_bullet(doc, "Streamlit 테마 설정으로 정보 중심의 일관된 화면 구성")
-
-    doc.add_heading("3.5 Claude Code 활용", level=2)
-    doc.add_paragraph(
-        "Claude Code 기반 AI 코딩 워크플로를 활용해 요구사항을 구현 단위로 분해하고, 모듈별 "
-        "인터페이스와 테스트를 먼저 정의한 뒤 구현·검증을 반복했다. PDF 중복 처리와 같은 "
-        "Windows 환경 문제를 테스트 과정에서 발견해 수정했고, 배포 전 비밀키·git 상태·웹 "
-        "헬스 체크를 점검하는 방식으로 개발 품질을 관리했다."
-    )
-
-    # Page 5 — Verification.
-    doc.add_heading("4. 테스트 및 평가", level=1)
-    add_lead_callout(
-        doc,
-        "검증 결과",
-        "단위 테스트 12개와 한국어·영어·중국어·베트남어 라이브 평가 4개를 모두 통과했으며, Streamlit 로컬 헬스 엔드포인트에서 HTTP 200을 확인했다.",
-    )
-
-    doc.add_heading("4.1 단위 테스트", level=2)
-    add_table(
-        doc,
-        ["검증 영역", "주요 확인 항목", "결과"],
-        [
-            ("설정", "모델명, 언어/과정 파일명 분류", "3/3"),
-            ("PDF 추출", "청크 크기, 짧은 문서, 실제 메타데이터", "3/3"),
-            ("Answerer", "빈 문맥 무호출 거절, 출처 포맷", "2/2"),
-            ("Checklist", "검색 결과 없음 시 안전한 거절", "1/1"),
-            ("Ingest", "안정적이고 내용 민감한 문서 ID", "1/1"),
-            ("Retriever", "빈 질문 처리, 과정+공통 문서 필터", "2/2"),
-        ],
-        [2000, 5860, 1500],
-        [
-            WD_ALIGN_PARAGRAPH.LEFT,
-            WD_ALIGN_PARAGRAPH.LEFT,
-            WD_ALIGN_PARAGRAPH.CENTER,
-        ],
-    )
-
-    doc.add_heading("4.2 다국어 라이브 평가", level=2)
-    add_table(
-        doc,
-        ["언어", "질문 예시", "판정"],
-        [
-            ("한국어", "무슨 서류를 제출해야 하나요?", "PASS"),
-            ("영어", "What is the application deadline?", "PASS"),
-            ("중국어", "本科申请需要什么材料?", "PASS"),
-            ("베트남어", "Cần những giấy tờ gì để nộp hồ sơ?", "PASS"),
-        ],
-        [1500, 6360, 1500],
-        [
-            WD_ALIGN_PARAGRAPH.CENTER,
-            WD_ALIGN_PARAGRAPH.LEFT,
-            WD_ALIGN_PARAGRAPH.CENTER,
-        ],
-    )
-
-    doc.add_heading("4.3 실행 검증", level=2)
-    add_bullet(doc, "실제 공식 PDF 6개에서 총 64개 텍스트 청크 생성")
-    add_bullet(doc, "Persistent Chroma 인덱스에 벡터 64개 저장 확인")
-    add_bullet(doc, "영어·중국어·베트남어 질의에서 관련 한국어/영어 문서 검색 확인")
-    add_bullet(doc, "Streamlit 로컬 서버 시작 및 `/_stcore/health` HTTP 200 확인")
-    add_bullet(doc, "공개 Streamlit URL에서 실제 질문의 답변과 파일명·페이지 출처 표시 확인")
-    add_bullet(doc, "커밋 대상 파일에서 OpenAI 비밀키 패턴이 없음을 확인")
-
-    doc.add_heading("4.4 평가 한계", level=2)
-    doc.add_paragraph(
-        "현재 골드 평가 세트는 대표 언어 4개를 빠르게 확인하는 스모크 테스트 수준이다. "
-        "향후에는 마감일·등록금·지원자격·서류 예외조건 등 약 15개 이상의 정답 기반 질문으로 "
-        "확장하고, 검색 정확도와 최종 답변 정확도를 별도로 측정할 필요가 있다."
-    )
-
-    # Page 6 — Deployment, limitations, conclusion.
-    doc.add_heading("5. 배포 및 운영", level=1)
-    doc.add_heading("5.1 제출·배포 링크", level=2)
-    add_table(
-        doc,
-        ["항목", "링크/파일"],
-        [
+            ("공개 웹 서비스", DEPLOY_URL),
             ("GitHub 저장소", GITHUB_URL),
-            ("최종 웹 서비스", DEPLOY_URL),
             ("소스 코드 노트북", "submission/BUFS_Admissions_RAG_20232829.ipynb"),
-            ("프로젝트 결과보고서", "submission/BUFS_Admissions_RAG_결과보고서_20232829.docx"),
+            ("결과보고서", "submission/BUFS_Admissions_RAG_결과보고서_20232829.docx"),
         ],
         [2600, 6760],
     )
 
-    doc.add_heading("5.2 배포 구성", level=2)
-    add_number(doc, "Repository", "소스 코드와 persistent `chroma_db/`를 GitHub `main` 브랜치에 저장한다.")
-    add_number(doc, "Entry point", "Streamlit Community Cloud의 실행 파일을 `app.py`로 지정한다.")
-    add_number(doc, "Secrets", "OpenAI 키는 저장소가 아닌 Streamlit Secrets의 `OPENAI_API_KEY`에 저장한다.")
-    add_number(doc, "Operation", "GitHub에 새 커밋이 푸시되면 Streamlit 앱이 자동으로 재배포된다.")
+    doc.add_heading("8. 아쉬운 점과 앞으로 해 보고 싶은 것", level=1)
+    add_bullet(doc, "이미지로 된 안내 화면도 검색할 수 있도록 OCR을 추가하고 싶다.")
+    add_bullet(doc, "질문이 학부인지 대학원인지 먼저 선택하게 하면 서로 다른 과정의 출처가 섞이는 일을 줄일 수 있다.")
+    add_bullet(doc, "입학 공지가 바뀔 때 자동으로 문서를 다시 수집하고 인덱스를 갱신하는 기능이 필요하다.")
+    add_bullet(doc, "실제 외국인 지원자에게 사용해 보게 하고 어려웠던 표현이나 빠진 질문을 수집하고 싶다.")
 
-    doc.add_heading("6. 한계 및 개선 방향", level=1)
-    add_bullet(doc, "스크린샷 중심 페이지의 OCR은 v1 범위에서 제외되어 이미지 내부 텍스트를 검색하지 못한다.")
-    add_bullet(doc, "PDF가 갱신되면 수동 ingest가 필요하므로 향후 자동 문서 동기화 파이프라인이 필요하다.")
-    add_bullet(doc, "현재 모델 답변은 정보 안내 목적이며 중요한 일정과 자격요건은 입학처 재확인이 필요하다.")
-    add_bullet(doc, "향후 검색 점수 임계값, reranker, 사용자 피드백을 추가하면 근거 적합도를 높일 수 있다.")
-
-    doc.add_heading("7. 결론", level=1)
+    doc.add_heading("9. 느낀 점", level=1)
     doc.add_paragraph(
-        "본 프로젝트는 단순한 1:1 번역기를 넘어, 서로 다른 언어로 작성된 공식 문서를 하나의 "
-        "검색 가능한 지식베이스로 통합하고 지원자의 상황에 맞는 답변과 체크리스트를 제공한다. "
-        "LangChain, Chroma VectorDB, 다국어 임베딩, LLM, Streamlit을 실제 서비스 흐름으로 "
-        "연결했으며, 출처 표시와 답변 거절 정책으로 입학 정보 서비스에 필요한 신뢰성을 강화했다."
+        "이번 프로젝트를 하면서 RAG는 단순히 PDF를 넣고 질문하는 기능이 아니라는 것을 알게 되었다. "
+        "텍스트를 어떻게 나누는지, 출처 정보를 어떻게 남기는지, 검색 결과가 없을 때 어떻게 처리하는지가 "
+        "최종 답변의 신뢰도에 직접 영향을 줬다."
+    )
+    doc.add_paragraph(
+        "또한 다국어 서비스에서는 번역 품질만큼 사용자가 원문을 확인할 수 있게 하는 것이 중요했다. "
+        "현재 기능은 작은 규모이지만, 학교에 처음 지원하는 학생이 여러 PDF를 반복해서 찾는 시간을 "
+        "줄여 줄 수 있다는 점에서 실제 사용 목적이 분명한 결과물을 만들었다고 생각한다."
     )
 
     signoff = doc.add_paragraph()
