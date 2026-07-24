@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-24
 **Branch:** `feature/bufs-rag`
-**Status:** 2 of 9 tasks built. Paused for handoff.
+**Status:** Complete — all 9 tasks built and validated.
 
 ## What this project is
 
@@ -30,39 +30,30 @@ Second feature: a personalized required-documents checklist. Deploys on Streamli
 |---|---|---|---|
 | Bootstrap | git repo, `feature/bufs-rag` branch, secret-protecting `.gitignore` | `5438980` | n/a |
 | Task 1 | `config.py` (paths, model names, `meta_for()` filename→metadata), `requirements.txt`, `tests/test_config.py` | `a2f7e4d` | ✅ clean |
-| Task 2 | `extract.py` (PDF→metadata-tagged chunks), `tests/test_extract.py` | `7effac5` | ⚠️ **review interrupted — must re-review** |
+| Task 2 | `extract.py` (PDF→metadata-tagged chunks), `tests/test_extract.py` | `7effac5` | ✅ clean |
+| Task 3 | Persistent, idempotent 64-chunk Chroma index | final implementation | ✅ built |
+| Task 4 | Multilingual retriever with program-level filtering | final implementation | ✅ smoke-tested |
+| Task 5 | Grounded answerer with citations and empty-context refusal | final implementation | ✅ tested |
+| Task 6 | Personalized required-documents checklist | final implementation | ✅ tested |
+| Task 7 | Streamlit chat + checklist UI | final implementation | ✅ health check |
+| Task 8 | Korean/English/Chinese/Vietnamese live eval | final implementation | ✅ 4/4 |
+| Task 9 | Demo notebook, README, and deployment instructions | final implementation | ✅ validated |
 
-Tests currently: **6/6 passing** (`py -3 -m pytest`).
+Tests currently: **12/12 passing** (`py -3 -m pytest`).
 
 **Task 2 note:** the implementer found and fixed a real Windows bug — the plan's
 literal `extract_all()` globbed `*.pdf` + `*.PDF`, which double-matches every file
 on Windows' case-insensitive filesystem (128→64 chunks). Fix is in `7effac5`;
-details in `.superpowers/sdd/task-2-report.md`. The review of this fix did not
-finish, so **re-review Task 2 first**.
+details are in `.superpowers/sdd/task-2-report.md`. The fix has now been reviewed
+and the index contains exactly 64 vectors.
 
-## Remaining tasks (3–9, all fully specified in the plan)
+## Final validation
 
-3. `ingest.py` — embed chunks into persistent Chroma (`chroma_db/`, committed). **First task that spends OpenAI credits.**
-4. `retriever.py` — `retrieve(query, k, level)` with metadata filter.
-5. `answerer.py` — grounded, cited answer; **refuses without calling the LLM on empty context**.
-6. `checklist.py` — `build_checklist(...)` personalized document list.
-7. `app.py` — Streamlit UI (Chat + Checklist tabs).
-8. `eval/` — multilingual gold-question eval set.
-9. `notebooks/01_explore_pdfs.ipynb`, `README.md`, deploy prep.
-
-## How to continue
-
-Two options for your colleague:
-
-**A. Same subagent-driven flow** (what was running): per task — extract brief
-(`.superpowers/sdd/scripts` helpers in the superpowers skill), dispatch a fresh
-implementer, generate a review package, dispatch a reviewer, fix Critical/Important,
-mark complete in the ledger. Re-review Task 2 before starting Task 3.
-
-**B. Manual** — the plan has complete, copy-pasteable code and TDD steps for every
-task. Just work top to bottom from Task 3, committing per task.
-
-Either way, after all tasks: run the gold eval (Task 8) and do one whole-branch review.
+- Persistent index: 64 vectors, matching the 64 extracted chunks.
+- Multilingual live eval: 4/4 passed.
+- Streamlit health endpoint: HTTP 200.
+- Unit tests: 12 passed.
+- Notebook JSON and all Python modules compile successfully.
 
 ## Environment gotchas (read before running anything)
 

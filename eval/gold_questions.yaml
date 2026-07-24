@@ -1,0 +1,9 @@
+# Multilingual retrieval checks. The expected value is matched against citations.
+- q: "무슨 서류를 제출해야 하나요?"
+  expect_source_contains: "체크리스트"
+- q: "What is the application deadline?"
+  expect_source_contains: ".pdf"
+- q: "本科申请需要什么材料?"
+  expect_source_contains: ".pdf"
+- q: "Cần những giấy tờ gì để nộp hồ sơ?"
+  expect_source_contains: ".pdf"
