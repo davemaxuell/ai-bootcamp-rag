@@ -1,5 +1,8 @@
 # BUFS Multilingual Admissions RAG
 
+**작성자:** 맥슈웰 데이브<br>
+**학번:** 20232829
+
 A Streamlit assistant for international applicants to Busan University of
 Foreign Studies. It retrieves relevant passages from six official Korean and
 English admissions PDFs, answers in the question's language, cites filenames
@@ -76,3 +79,9 @@ The unit tests do not call OpenAI. Indexing and the live evaluation do.
 The answers are generated from the supplied official PDFs, but applicants
 should confirm consequential deadlines and requirements with the BUFS
 admissions office.
+
+## 제출 자료
+
+- 소스 코드 노트북: `submission/BUFS_Admissions_RAG_20232829.ipynb`
+- 프로젝트 결과 보고서: `submission/BUFS_Admissions_RAG_결과보고서_20232829.docx`
+- 최종 배포 웹 URL: 배포 완료 후 이 문서에 기재
