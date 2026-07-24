@@ -8,6 +8,8 @@ Foreign Studies. It retrieves relevant passages from six official Korean and
 English admissions PDFs, answers in the question's language, cites filenames
 and page numbers, and builds a personalized application-document checklist.
 
+**Live app:** https://ai-bootcamp-rag-7ahkiva6fmc7qzkiifmz6a.streamlit.app/
+
 ## Setup
 
 Python 3.11+ is recommended. On Windows, use the Python launcher:
@@ -84,4 +86,4 @@ admissions office.
 
 - 소스 코드 노트북: `submission/BUFS_Admissions_RAG_20232829.ipynb`
 - 프로젝트 결과 보고서: `submission/BUFS_Admissions_RAG_결과보고서_20232829.docx`
-- 최종 배포 웹 URL: 배포 완료 후 이 문서에 기재
+- 최종 배포 웹 URL: https://ai-bootcamp-rag-7ahkiva6fmc7qzkiifmz6a.streamlit.app/
